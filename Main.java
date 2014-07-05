@@ -56,18 +56,25 @@ public class Main {
         System.out.println("Numerator = "+testletVariance);
 
         //Construct the denominator
+        /*
         double testVariance;
         ArrayList<Integer> responseList = new ArrayList<Integer>();
         for(Construct c : constructList){
             for(int i : c.getScoreList())
                 responseList.add(i);
+        }*/
+        //Instead of adding all test responses, find variance of all CONSTRUCTS
+        double testVariance;
+        ArrayList<Double> responseList = new ArrayList<Double>();
+        for(Construct c : constructList){
+            responseList.add(c.variance());
         }
-        testVariance = variance(responseList);
+        testVariance = variance3(responseList);
         System.out.println("Denominator contains "+responseList.size()+" items and = "+testVariance);
 
-        int k = constructList.size();
+        double k = constructList.size();
         System.out.println("K = "+k);
-        return (k / (k-1)) * (1-testletVariance/testVariance);
+        return (k / (k-1)) * (1.0-testletVariance/testVariance);
     }
 
     public static double variance(ArrayList<Integer> responseList){
@@ -101,6 +108,28 @@ public class Main {
             sum_sqr += i*i;
         }
         return (sum_sqr - (sum*sum)/n)/(n-1);
+    }
+
+    public static double variance3(ArrayList<Double> responseList){
+        /**
+         * Variance measures the spread of a set of numbers.
+         * Higher variance means greater spread.
+         * The algorithm being used is translated from this page:
+         * http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+         * This is the two-pass compensated-summation algorithm.
+         * @return variance of integers
+         */
+        double n=0, sum1=0, sum2=0, sum3=0;
+        for(Double i : responseList){
+            n += 1;
+            sum1 += i;
+        }
+        double sampleMean = sum1/n;
+        for(Double i : responseList){
+            sum2 += Math.pow(i - sampleMean, 2);
+            sum3 += i-sampleMean;
+        }
+        return (Math.pow(sum2-sum3,2)/n)/(n-1);
     }
 
 }
