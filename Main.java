@@ -17,6 +17,11 @@ public class Main {
             String[] lineReader;
             ArrayList<Construct> constructList = new ArrayList<Construct>();
             ArrayList<String> constructStringList = new ArrayList<String>();
+            //Construct participant total list
+            lineReader = fileScanner.nextLine().split(",");
+            ArrayList<Integer> totalList = new ArrayList<Integer>();
+            for(int i = 2; i < lineReader.length; i++)
+                totalList.add(Integer.parseInt(lineReader[i]));
             while(fileScanner.hasNextLine()){
                 lineReader = fileScanner.nextLine().split(",");
                 //System.out.println(lineReader[0]+" "+lineReader[1]);
@@ -32,13 +37,13 @@ public class Main {
                             c.addToList(lineReader);
                 }
             }
-            System.out.println("Cronbach's Alpha for this data set is: "+cronbachAlpha(constructList));
+            System.out.println("Cronbach's Alpha for this data set is: "+cronbachAlpha(constructList, totalList));
         } finally {
 
         }
     }
 
-    public static double cronbachAlpha(ArrayList<Construct> constructList){
+    public static double cronbachAlpha(ArrayList<Construct> constructList, ArrayList<Integer> totalList){
         /**
          * Cronbach's Alpha is a measure of internal consistency.
          * Equation used can be found here:
@@ -50,31 +55,16 @@ public class Main {
         //Construct the numerator
         double testletVariance = 0;
         for(Construct c : constructList) {
-            testletVariance += c.variance();
-            System.out.println(c.getName()+" variance = "+c.variance());
+            testletVariance += c.variance2();
+            System.out.println(c.getName()+" variance = "+c.variance2());
         }
         System.out.println("Numerator = "+testletVariance);
-
-        //Construct the denominator
-        /*
-        double testVariance;
-        ArrayList<Integer> responseList = new ArrayList<Integer>();
-        for(Construct c : constructList){
-            for(int i : c.getScoreList())
-                responseList.add(i);
-        }*/
-        //Instead of adding all test responses, find variance of all CONSTRUCTS
-        double testVariance;
-        ArrayList<Double> responseList = new ArrayList<Double>();
-        for(Construct c : constructList){
-            responseList.add(c.variance());
-        }
-        testVariance = variance3(responseList);
-        System.out.println("Denominator contains "+responseList.size()+" items and = "+testVariance);
-
+        //Constructing a correct denominator based on the variance of sums
+        double varianceOfSums = variance2(totalList);
+        System.out.println("Denominator contains "+totalList.size()+" items and = "+varianceOfSums);
         double k = constructList.size();
         System.out.println("K = "+k);
-        return (k / (k-1)) * (1.0-testletVariance/testVariance);
+        return (k / (k-1)) * (1.0-testletVariance/varianceOfSums);
     }
 
     public static double variance(ArrayList<Integer> responseList){
@@ -131,5 +121,7 @@ public class Main {
         }
         return (Math.pow(sum2-sum3,2)/n)/(n-1);
     }
+
+
 
 }
