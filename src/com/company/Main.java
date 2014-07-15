@@ -13,10 +13,12 @@ public class Main {
 
 
     public static double standardDeviationUsingVariance(ArrayList<Integer> inputList){
-        return Math.pow(variance(inputList), 0.5);
+        return Math.pow(twoPassVariance(inputList), 0.5);
     }
 
-    public static double variance(ArrayList<Integer> inputList){
+    public static double twoPassVariance(ArrayList<Integer> inputList){
+        //Algorithm obtained from this page
+        //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
         int n=0, sum1=0, sum2=0;
         for(int i: inputList){
             n+=1;
