@@ -9,6 +9,10 @@ public class Main {
         for(int i = 1; i <= 5; i++) dataSet.add(i);
         System.out.println(dataSet.toString());
         System.out.println(standardDeviationUsingVariance(dataSet));
+        /*These two lines print out:
+            [1, 2, 3, 4, 5]
+            1.4142135623730951
+        */
     }
 
 
