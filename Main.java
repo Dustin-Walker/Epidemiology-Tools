@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Main {
 
+    final int INDEX = 1;
+
     public static void main(String[] args) throws IOException {
         //Read the file in through standard input
         Scanner fileScanner;
@@ -24,16 +26,15 @@ public class Main {
                 totalList.add(Integer.parseInt(lineReader[i]));
             while(fileScanner.hasNextLine()){
                 lineReader = fileScanner.nextLine().split(",");
-                //System.out.println(lineReader[0]+" "+lineReader[1]);
-                if(constructStringList.contains(lineReader[1])) {
+                if(constructStringList.contains(lineReader[INDEX])) {
                    for(Construct c : constructList)
-                       if(c.getName().equals(lineReader[1]))
+                       if(c.getName().equals(lineReader[INDEX]))
                            c.addToList(lineReader);
                 } else {
-                    constructStringList.add(lineReader[1]);
-                    constructList.add(new Construct(lineReader[1]));
+                    constructStringList.add(lineReader[INDEX]);
+                    constructList.add(new Construct(lineReader[INDEX]));
                     for(Construct c : constructList)
-                        if(c.getName().equals(lineReader[1]))
+                        if(c.getName().equals(lineReader[INDEX]))
                             c.addToList(lineReader);
                 }
             }
@@ -43,14 +44,15 @@ public class Main {
         }
     }
 
+    /**
+     * Cronbach's Alpha is a measure of internal consistency.
+     * The equation used can be found here:
+     * http://en.wikipedia.org/wiki/Cronbach's_alpha
+     * @param constructList List of construct objects
+     * @return Cronbach's Alpha statistic
+     */
     public static double cronbachAlpha(ArrayList<Construct> constructList, ArrayList<Integer> totalList){
-        /**
-         * Cronbach's Alpha is a measure of internal consistency.
-         * Equation used can be found here:
-         * http://en.wikipedia.org/wiki/Cronbach's_alpha
-         * @param constructList List of construct objects
-         * @return Cronbach's Alpha
-         */
+
 
         //Construct the numerator
         double testletVariance = 0;
@@ -60,68 +62,30 @@ public class Main {
         }
         System.out.println("Numerator = "+testletVariance);
         //Constructing a correct denominator based on the variance of sums
-        double varianceOfSums = variance2(totalList);
+        double varianceOfSums = variance(totalList);
         System.out.println("Denominator contains "+totalList.size()+" items and = "+varianceOfSums);
         double k = constructList.size();
         System.out.println("K = "+k);
         return (k / (k-1)) * (1.0-testletVariance/varianceOfSums);
     }
 
-    public static double variance(ArrayList<Integer> responseList){
-        /**
-         * Variance measures the spread of a set of numbers.
-         * Higher variance means greater spread.
-         * The algorithm being used is translated from this page:
-         * http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-         * This is the two-pass compensated-summation algorithm.
-         * @return variance of integers
-         */
-        double n=0, sum1=0, sum2=0, sum3=0;
-        for(int i : responseList){
-            n += 1;
-            sum1 += i;
-        }
-        double sampleMean = sum1/n;
-        for(int i : responseList){
-            sum2 += Math.pow(i - sampleMean, 2);
-            sum3 += i-sampleMean;
-        }
-        return (Math.pow(sum2-sum3,2)/n)/(n-1);
-    }
-
-    public static double variance2(ArrayList<Integer> responseList){
-
-        double n=0,sum=0,sum_sqr=0;
-        for(int i : responseList){
+    /**
+     * This method returns the variance measure of a set of values.
+     * "Variance measures how far a set of numbers is spread out."
+     * The equation used can be found here:
+     * http://en.wikipedia.org/wiki/Variance
+     * @param arrayList
+     * @return
+     */
+    public static double variance(ArrayList<Integer> arrayList){
+        double n=0,sum=0,sumOfSquares=0;
+        for(int i : arrayList){
             n += 1;
             sum += i;
-            sum_sqr += i*i;
+            sumOfSquares += i*i;
         }
-        return (sum_sqr - (sum*sum)/n)/(n-1);
+        return (sumOfSquares - (sum*sum)/n)/(n-1);
     }
-
-    public static double variance3(ArrayList<Double> responseList){
-        /**
-         * Variance measures the spread of a set of numbers.
-         * Higher variance means greater spread.
-         * The algorithm being used is translated from this page:
-         * http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-         * This is the two-pass compensated-summation algorithm.
-         * @return variance of integers
-         */
-        double n=0, sum1=0, sum2=0, sum3=0;
-        for(Double i : responseList){
-            n += 1;
-            sum1 += i;
-        }
-        double sampleMean = sum1/n;
-        for(Double i : responseList){
-            sum2 += Math.pow(i - sampleMean, 2);
-            sum3 += i-sampleMean;
-        }
-        return (Math.pow(sum2-sum3,2)/n)/(n-1);
-    }
-
 
 
 }
